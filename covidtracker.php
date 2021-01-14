@@ -26,7 +26,7 @@ if(isset($_POST['MAJ']))
             {
             if(curl_getinfo($curl,CURLINFO_HTTP_CODE)=== 200){
             $data = json_decode($data,true);
-                
+            viderDB();
             for($i=0;$i<count($data['allLiveFranceData']);$i++){
             insertDB($data['allLiveFranceData'][$i]['code'] ,
             $data['allLiveFranceData'][$i]['nom'] ,
@@ -40,21 +40,43 @@ if(isset($_POST['MAJ']))
         }
         }
         curl_close($curl);
+      
     }
 
 register_activation_hook(__FILE__,"createDB");
 
 function tbare_wordpress_plugin_demo($atts) {
-	$Content = "<style>\r\n";
-	$Content .= "h3.demoClass {\r\n";
-	$Content .= "color: #26b158;\r\n";
-	$Content .= "}\r\n";
-	$Content .= "</style>\r\n";
-	$Content .= '<h3 class="demoClass">Check it out!</h3>';
-	 
+    $Content =   allRegions();
+    
     return $Content;
 }
-add_shortcode('tbare-plugin-demo', 'tbare_wordpress_plugin_demo');
+add_shortcode('regions', 'tbare_wordpress_plugin_demo');
+
+
+
+function tbare_wordpress_plugin_demo2($atts) {
+    $Content =   allDepartements();
+    
+    return $Content;
+}
+add_shortcode('departements', 'tbare_wordpress_plugin_demo2');
+
+
+function tbare_wordpress_plugin_demo3($atts) {
+    $Content =   Region($atts);
+    
+    return $Content;
+}
+add_shortcode('region', 'tbare_wordpress_plugin_demo3');
+
+
+function tbare_wordpress_plugin_demo4($atts) {
+    $Content =   RegionSearch();
+    
+    return $Content;
+}
+add_shortcode('search', 'tbare_wordpress_plugin_demo4');
+
 
 function my_admin_menu() {
     add_menu_page(
@@ -88,13 +110,13 @@ function my_admin_page_contents() {
     <h3>Veuillez séléctionner une option pour générer un shortcode</h3>
 
        <select name="choix" id="choix">
-    <option value="">--Please choose an option--</option>
+    <option value="1">--Please choose an option--</option>
     <option value="departement">Departement</option>
     <option value="region">Région</option>
     <option value="departements">Departements</option>
     <option value="displayWidthSearchBar">displayWidthSearchBar</option>
 </select>
-       <button onclick="selection()">Click me</button>
+       <button onclick="selection()">Valider</button>
 
 
 <div id="short"></div>
@@ -103,8 +125,10 @@ function my_admin_page_contents() {
 function selection(){
 var e = document.getElementById("choix");
 var strUser = e.value;
-
+if(strUser != "1")
 document.getElementById('short').innerHTML="<h3>Voici votre shortcode à utiliser:</h3> ["+strUser+"]";
+else
+vdocument.getElementById('short').innerHTML="<h3>Veuillez séléctionner une option au-dessus</h3>";
 
 }</script>
 
